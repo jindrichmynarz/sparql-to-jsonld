@@ -1,0 +1,34 @@
+PREFIX ruian:  <http://ruian.linked.opendata.cz/ontology/>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+
+CONSTRUCT {
+  <{{resource}}> schema:postalCode ?postalCode ;
+    schema:addressLocality ?addressLocality ;
+    ruian:cisloDomovni ?cisloDomovni ;
+    schema:streetAddress ?streetAddress ;
+    ruian:cisloOrientacni ?cisloOrientacni ;
+    ruian:cisloOrientacniPismeno ?cisloOrientacniPismeno ;
+    schema:location ?location .
+}
+WHERE {
+  GRAPH <http://linked.opendata.cz/resource/cuzk.cz/czech-addresses> {
+    <{{resource}}> schema:postalCode ?postalCode ;
+      schema:addressLocality/schema:name ?addressLocality ;
+      ruian:cisloDomovni ?cisloDomovni ;
+      ^schema:address/schema:geo [
+        schema:latitude ?latitude ;
+        schema:longitude ?longitude
+      ] .
+    BIND (CONCAT(STR(?latitude), ",", STR(?longitude)) AS ?location)
+    OPTIONAL {
+      <{{resource}}> schema:streetAddress ?streetAddress .
+      OPTIONAL {
+        <{{resource}}> ruian:cisloOrientacni ?cisloOrientacni .
+        OPTIONAL {
+          <{{resource}}> ruian:cisloOrientacniPismeno ?cisloOrientacniPismeno .
+        }
+      }
+    }
+  }
+}
