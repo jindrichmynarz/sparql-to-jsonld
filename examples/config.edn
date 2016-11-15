@@ -1,0 +1,5 @@
+{:sparql-endpoint "http://localhost:8890/sparql"
+ :page-size 10000 ; Virtuso usually defaults to maximum of 10 thousand results.
+ :sleep 0 ; No sleep till Brooklyn! (Be careful not to hit your SPARQL endpoint too hard.)
+ :start-from 152337 ; Restart previusly interrupted download from this offset.
+ }
