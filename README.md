@@ -1,6 +1,6 @@
 # sparql-to-jsonld
 
-A command-line tool to serialize RDF from a SPARQL endpoint to JSON-LD documents.
+A command-line tool to serialize RDF from a SPARQL endpoint to JSON-LD documents. You give it a SPARQL [`SELECT`](https://www.w3.org/TR/sparql11-query/#select) query to select resources you want, a SPARQL [`CONSTRUCT`](https://www.w3.org/TR/sparql11-query/#construct) or [`DESCRIBE`](https://www.w3.org/TR/sparql11-query/#describe) query to construct a description of each resource, and a [JSON-LD frame](http://json-ld.org/spec/latest/json-ld-framing) to shape the RDF graph into a predictable JSON tree.
 
 ## Usage
 
