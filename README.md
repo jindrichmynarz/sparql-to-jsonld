@@ -29,8 +29,9 @@ See [this example](examples/config.edn) of a configuration. Apart from the confi
 * `--sparql`: A paged SPARQL query to select IRIs of resources to download. The query must be a [Mustache](https://mustache.github.io) template that contains `limit` and `offset` variables to drive the paged execution. The query must project a single variable named `?resource`. See [this example](examples/select_query.mustache).
 * `--describe`: A CONSTRUCT or DESCRIBE SPARQL query to describe a resource to download. The query must be a Mustache template that uses the `resource` variable as a placeholder for the resource's IRI. See [this example](examples/describe_query.mustache).
 * `--frame`: A [JSON-LD frame](http://json-ld.org/spec/latest/json-ld-framing) to apply to the resource's description. See [this example](examples/frame.jsonld).
+* `--output` (optional, default = standard output): A path to file to which the JSON-LD documents will be written.
 
-The tool prints the framed JSON-LD documents containing the descriptions of the selected resources to the standard output, so that it can be redirected to a file or piped to another process. Each JSON document is printed on a single line.
+By default, the tool prints the framed JSON-LD documents containing the descriptions of the selected resources to the standard output, so that it can be redirected to a file or piped to another process. Each JSON document is printed on a single line.
 
 ## Caveats
 

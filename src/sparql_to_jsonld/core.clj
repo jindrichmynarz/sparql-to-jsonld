@@ -4,11 +4,12 @@
             [sparql-to-jsonld.sparql :as sparql]
             [sparql-to-jsonld.jsonld :as jsonld]
             [clojure.tools.cli :refer [parse-opts]]
-            [clojure.java.io :refer [as-file]]
+            [clojure.java.io :as io :refer [as-file]]
             [clojure.edn :as edn]
             [schema.core :as s]
             [mount.core :as mount])
-  (:import (org.apache.commons.validator.routines UrlValidator)))
+  (:import (java.io PrintWriter)
+           (org.apache.commons.validator.routines UrlValidator)))
 
 ; ----- Schemata -----
 
@@ -92,9 +93,11 @@
         frame-fn (partial jsonld/frame-jsonld frame')
         compact-fn (partial jsonld/compact-jsonld frame')
         convert-fn (comp jsonld/jsonld->string compact-fn frame-fn jsonld/model->jsonld)]
-    (doseq [description (pmap (comp describe :resource) (sparql/select-query-unlimited select-query))
-            :when (not (.isEmpty description))]
-      (println (convert-fn description)))))
+    (with-open [writer (io/writer output)]
+      (doseq [description (pmap (comp describe :resource) (sparql/select-query-unlimited select-query))
+              :when (not (.isEmpty description))]
+        (.write writer (convert-fn description))
+        (.newLine writer)))))
 
 ; ----- Private vars -----
 
@@ -107,6 +110,8 @@
     :validate [file-exists? "The SPARQL file to describe resources doesn't exist!"]]
    ["-f" "--frame FRAME" "Path to a JSON-LD frame to format data"
     :validate [file-exists? "The JSON-LD frame doesn't exist!"]]
+   ["-o" "--output OUTPUT" "Path to the output file"
+    :default *out*]
    ["-h" "--help" "Display help message"]])
 
 ; ----- Public functions -----
