@@ -17,6 +17,8 @@
 
 (def ^:private non-negative-number (s/constrained s/Num (complement neg?) 'not-neg?))
 
+(def ^:private non-negative-integer (s/constrained s/Int (complement neg?) 'not-neg?))
+
 (def ^:private http? (partial re-matches #"^https?:\/\/.*$"))
 
 (def ^:private valid-url?
@@ -32,7 +34,7 @@
   {:sparql-endpoint (s/conditional http? url) ; The URL of the SPARQL endpoint.
    (s/optional-key :page-size) positive-integer
    (s/optional-key :sleep) non-negative-number
-   (s/optional-key :start-from) positive-integer
+   (s/optional-key :start-from) non-negative-integer
    (s/optional-key :max-attempts) positive-integer})
 
 ; ----- Private functions -----
