@@ -8,8 +8,7 @@
             [clojure.zip :as zip]
             [clojure.data.zip.xml :as zip-xml])
   (:import (java.io ByteArrayInputStream)
-           (org.apache.jena.rdf.model Model ModelFactory)
-           (org.apache.jena.query QueryExecutionFactory)))
+           (org.apache.jena.rdf.model Model ModelFactory)))
 
 ; ----- Private functions -----
 
