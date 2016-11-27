@@ -31,7 +31,7 @@ See [this example](examples/config.edn) of a configuration. Apart from the confi
 * `--frame`: A [JSON-LD frame](http://json-ld.org/spec/latest/json-ld-framing) to apply to the resource's description. See [this example](examples/frame.jsonld).
 * `--output` (optional, default = standard output): A path to file to which the JSON-LD documents will be written.
 
-By default, the tool prints the framed JSON-LD documents containing the descriptions of the selected resources to the standard output, so that it can be redirected to a file or piped to another process. Each JSON document is printed on a single line.
+By default, the tool prints the framed JSON-LD documents containing the descriptions of the selected resources to the standard output, so that it can be redirected to a file or piped to another process. JSON-LD is output as [Newline Delimited JSON](http://ndjson.org).
 
 ## Caveats
 
