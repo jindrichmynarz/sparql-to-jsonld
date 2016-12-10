@@ -4,7 +4,7 @@
             [clj-http.client :as client]
             [stencil.core :refer [render-string]]
             [slingshot.slingshot :refer [throw+ try+]]
-            [clojure.xml :as xml]
+            [clojure.data.xml :as xml]
             [clojure.zip :as zip]
             [clojure.data.zip.xml :as zip-xml])
   (:import (java.io ByteArrayInputStream)
@@ -12,14 +12,9 @@
 
 ; ----- Private functions -----
 
-(defn- xml->zipper
-  "Take XML string `s`, parse it, and return XML zipper."
-  [s]
-  (->> s
-       .getBytes
-       ByteArrayInputStream.
-       xml/parse
-       zip/xml-zip))
+(def ^:private variable-binding-pair
+  "Returns a pair of variable name and its binding."
+  (juxt (comp keyword (zip-xml/attr :name)) zip-xml/text))
 
 (defn- execute-query
   "Execute SPARQL query from `sparql-string`."
@@ -46,14 +41,20 @@
       (.read results "" "NTRIPLES"))))
 
 (defn select-query
-  "Execute SPARQL SELECT query.
+  "Execute SPARQL SELECT query in `sparql-string`
   Returns an empty sequence when the query has no results."
   [sparql-string]
-  (let [results (xml->zipper (execute-query sparql-string))
-        sparql-variables (map keyword (zip-xml/xml-> results :head :variable (zip-xml/attr :name)))
-        sparql-results (zip-xml/xml-> results :results :result)
-        get-bindings (comp (partial zipmap sparql-variables) #(zip-xml/xml-> % :binding zip-xml/text))]
-    (map get-bindings sparql-results)))
+  (doall (for [result (-> sparql-string
+                          execute-query
+                          xml/parse-str
+                          :content
+                          second
+                          :content)
+               :let [zipper (zip/xml-zip result)]]
+           (->> (zip-xml/xml-> zipper :binding variable-binding-pair)
+                (partition 2)
+                (map vec)
+                (into {})))))
 
 (defn select-query-unlimited
   "Execute a SPARQL query rendered from `template` using `data`

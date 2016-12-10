@@ -6,6 +6,7 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.cli "0.3.5"]
                  [org.clojure/data.zip "0.1.2"]
+                 [org.clojure/data.xml "0.0.8"]
                  [stencil "0.5.0"]
                  [clj-http "3.3.0"]
                  [prismatic/schema "1.1.3"]
@@ -22,4 +23,5 @@
                                                     com.sun.jmx/jmxri]]]
   :main sparql-to-jsonld.core
   :profiles {:uberjar {:aot :all
-                       :uberjar-name "sparql_to_jsonld.jar"}})
+                       :uberjar-name "sparql_to_jsonld.jar"}}
+  :aliases {"file" ["run" "-m" "sparql-to-jsonld.file"]})
