@@ -87,21 +87,28 @@
     :as config}
    {:keys [sparql describe frame output remove-jsonld-context]}]
   (mount/start-with-args config)
-  (let [select-query (slurp sparql)
-        describe-query (slurp describe)
-        frame' (jsonld/string->jsonld (slurp frame))
-        describe (fn [resource]
-                   (Thread/sleep (* sleep 1000))
-                   (sparql/describe-query describe-query resource))
-        frame-fn (partial jsonld/frame-jsonld frame')
-        compact-fn (partial jsonld/compact-jsonld frame')
-        serialize-fn (fn [data] (jsonld/jsonld->string data :remove-jsonld-context? remove-jsonld-context))
-        convert-fn (comp serialize-fn compact-fn frame-fn jsonld/model->jsonld)]
-    (with-open [writer (io/writer output)]
-      (doseq [description (pmap (comp describe :resource) (sparql/select-query-unlimited select-query))
-              :when (not (.isEmpty description))]
-        (.write writer (convert-fn description))
-        (.newLine writer)))))
+  (try (let [select-query (slurp sparql)
+             describe-query (slurp describe)
+             frame' (jsonld/string->jsonld (slurp frame))
+             describe (fn [resource]
+                        (Thread/sleep (* sleep 1000))
+                        (sparql/describe-query describe-query resource))
+             frame-fn (partial jsonld/frame-jsonld frame')
+             compact-fn (partial jsonld/compact-jsonld frame')
+             serialize-fn (fn [data] (jsonld/jsonld->string data :remove-jsonld-context? remove-jsonld-context))
+             convert-fn (comp serialize-fn compact-fn frame-fn jsonld/model->jsonld)
+             descriptions (->> select-query
+                               sparql/select-query-unlimited
+                               (pmap (comp describe :resource))
+                               (filter (comp not (memfn isEmpty)))
+                               (map convert-fn))]
+         (if (= output *out*)
+           (doall (map (fn [description] (println description) (flush)) descriptions))
+           (with-open [writer (io/writer output)]
+             (doseq [description descriptions]
+               (.write writer description)
+               (.newLine writer)))))
+       (finally (shutdown-agents))))
 
 ; ----- Private vars -----
 
@@ -129,7 +136,7 @@
          :keys [errors summary]} (parse-opts args cli-options)
         ; Merge defaults
         config' (merge {:max-attempts 5 :page-size 1000 :sleep 1 :start-from 0} config)]
-    (cond help (info (usage summary)) 
+    (cond help (info (usage summary))
           errors (die (error-msg errors))
           :else (if-let [error (validate-config config')]
                   (die error)
