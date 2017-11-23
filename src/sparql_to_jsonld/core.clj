@@ -35,7 +35,8 @@
    (s/optional-key :page-size) positive-integer
    (s/optional-key :sleep) non-negative-number
    (s/optional-key :start-from) non-negative-integer
-   (s/optional-key :max-attempts) positive-integer})
+   (s/optional-key :max-attempts) positive-integer
+   (s/optional-key :remove-jsonld-context) s/Bool})
 
 ; ----- Private functions -----
 
@@ -84,7 +85,7 @@
 (defn- main
   [{:keys [sleep]
     :as config}
-   {:keys [sparql describe frame output]}]
+   {:keys [sparql describe frame output remove-jsonld-context]}]
   (mount/start-with-args config)
   (let [select-query (slurp sparql)
         describe-query (slurp describe)
@@ -94,7 +95,8 @@
                    (sparql/describe-query describe-query resource))
         frame-fn (partial jsonld/frame-jsonld frame')
         compact-fn (partial jsonld/compact-jsonld frame')
-        convert-fn (comp jsonld/jsonld->string compact-fn frame-fn jsonld/model->jsonld)]
+        serialize-fn (fn [data] (jsonld/jsonld->string data :remove-jsonld-context? remove-jsonld-context))
+        convert-fn (comp serialize-fn compact-fn frame-fn jsonld/model->jsonld)]
     (with-open [writer (io/writer output)]
       (doseq [description (pmap (comp describe :resource) (sparql/select-query-unlimited select-query))
               :when (not (.isEmpty description))]
@@ -114,6 +116,8 @@
     :validate [file-exists? "The JSON-LD frame doesn't exist!"]]
    ["-o" "--output OUTPUT" "Path to the output file"
     :default *out*]
+   [nil "--remove-jsonld-context" "Remove JSON-LD context from the output"
+    :default false]
    ["-h" "--help" "Display help message"]])
 
 ; ----- Public functions -----
