@@ -22,6 +22,8 @@
                                                     com.sun.jmdk/jmxtools
                                                     com.sun.jmx/jmxri]]]
   :main sparql-to-jsonld.core
-  :profiles {:uberjar {:aot :all
+  :profiles {:dev {:plugins [[lein-binplus "0.4.2"]]}
+             :uberjar {:aot :all
                        :uberjar-name "sparql_to_jsonld.jar"}}
-  :aliases {"file" ["run" "-m" "sparql-to-jsonld.file"]})
+  :aliases {"file" ["run" "-m" "sparql-to-jsonld.file"]}
+  :bin {:name "sparql_to_jsonld"})

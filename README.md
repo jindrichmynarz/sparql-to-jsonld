@@ -10,6 +10,12 @@ Compile using [Leiningen](http://leiningen.org):
 lein uberjar
 ```
 
+Alternatively, compile using [lein-binplus](https://github.com/BrunoBonacci/lein-binplus) to produce an executable file:
+
+```sh
+lein bin
+```
+
 Run from the command-line:
 
 ```sh
