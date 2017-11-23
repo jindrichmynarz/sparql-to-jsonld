@@ -22,6 +22,12 @@ Run from the command-line:
 java -jar sparql_to_jsonld.jar --help
 ```
 
+Or, when compiled with lein-binplus:
+
+```sh
+target/sparql_to_jsonld --help
+```
+
 You will need to provide the tool with several parameters. Provide configuration as an [EDN](https://github.com/edn-format/edn) file that contains the following keys:
 
 * `sparql-endpoint`: URL of a SPARQL query endpoint, such as `http://localhost:8890/sparql`.
