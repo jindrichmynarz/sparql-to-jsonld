@@ -36,7 +36,8 @@
 (defn ^Model construct-query
   "Execute SPARQL CONSTRUCT `sparql-string`." 
   [sparql-string]
-  (let [results (ByteArrayInputStream. (.getBytes (execute-query sparql-string :accept "text/ntriples")))]
+  (let [accept (if (:virtuoso? endpoint) "text/ntriples" "application/n-triples")
+        results (ByteArrayInputStream. (.getBytes (execute-query sparql-string :accept accept)))]
     (doto (ModelFactory/createDefaultModel)
       (.read results "" "NTRIPLES"))))
 
