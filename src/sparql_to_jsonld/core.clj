@@ -85,9 +85,9 @@
 (defn- main
   [{:keys [sleep]
     :as config}
-   {:keys [sparql describe frame output remove-jsonld-context]}]
+   {:keys [select describe frame output remove-jsonld-context]}]
   (mount/start-with-args config)
-  (try (let [select-query (slurp sparql)
+  (try (let [select-query (slurp select)
              describe-query (slurp describe)
              frame' (jsonld/string->jsonld (slurp frame))
              describe (fn [resource]
@@ -115,7 +115,7 @@
 (def ^:private cli-options
   [["-c" "--config CONFIG" "Path to configuration file in EDN"
     :parse-fn (comp edn/read-string slurp)]
-   ["-s" "--sparql SPARQL" "Path to SPARQL file to select resources"
+   ["-s" "--select SELECT" "Path to SPARQL file to select resources"
     :validate [file-exists? "The SPARQL file to select resources doesn't exist!"]]
    ["-d" "--describe DESCRIBE" "Path to SPARQL file to describe resources"
     :validate [file-exists? "The SPARQL file to describe resources doesn't exist!"]]
