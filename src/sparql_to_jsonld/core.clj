@@ -36,8 +36,7 @@
    (s/optional-key ::sparclj/page-size) positive-integer
    (s/optional-key :sleep) non-negative-number
    (s/optional-key ::sparclj/start-from) non-negative-integer
-   (s/optional-key ::sparclj/retries) positive-integer
-   (s/optional-key :remove-jsonld-context) s/Bool})
+   (s/optional-key ::sparclj/retries) positive-integer})
 
 ; ----- Private functions -----
 
@@ -97,19 +96,18 @@
              frame-fn (partial jsonld/frame-jsonld frame')
              compact-fn (partial jsonld/compact-jsonld frame')
              serialize-fn (fn [data] (jsonld/jsonld->string data :remove-jsonld-context? remove-jsonld-context))
-             convert-fn (comp serialize-fn compact-fn frame-fn jsonld/model->jsonld)
              print-fn (fn [description] (println description) (flush))
+             convert-fn (comp print-fn serialize-fn compact-fn frame-fn jsonld/model->jsonld)
              descriptions (->> select-query
                                sparql/select-query-unlimited
                                (pmap (comp describe :resource))
-                               (filter (comp not (memfn isEmpty)))
+                               (remove (memfn isEmpty))
                                (map convert-fn))]
          (if (= output *out*)
-           (doall (map print-fn descriptions))
+           (dorun descriptions)
            (with-open [writer (io/writer output)]
-             (doseq [description descriptions]
-               (.write writer description)
-               (.newLine writer)))))
+             (binding [*out* writer]
+               (dorun descriptions)))))
        (finally (shutdown-agents))))
 
 ; ----- Private vars -----
