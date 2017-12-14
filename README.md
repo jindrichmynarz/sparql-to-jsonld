@@ -30,11 +30,11 @@ target/sparql_to_jsonld --help
 
 You will need to provide the tool with several parameters. Provide configuration as an [EDN](https://github.com/edn-format/edn) file that contains the following keys:
 
-* `sparql-endpoint`: URL of a SPARQL query endpoint, such as `http://localhost:8890/sparql`.
-* `page-size` (optional, default = 1000): Number of resources to download in one query.
+* `:sparclj.core/url`: URL of a SPARQL query endpoint, such as `http://localhost:8890/sparql`.
+* `:sparclj.core/page-size` (optional, default = 1000): Number of resources to download in one query.
 * `sleep` (optional, default = 1): Time in seconds to wait in between requests to the SPARQL endpoint.
-* `start-from` (optional, default = 0): Number of resources to skip that can be used to restart a previously interrupted download.
-* `max-attempts` (optional, default = 5): Maximum number of attempts at retrying failed queries.
+* `:sparclj.core/start-from` (optional, default = 0): Number of resources to skip that can be used to restart a previously interrupted download.
+* `:sparclj.core/retries` (optional, default = 5): Maximum number of attempts at retrying failed queries.
 
 See [this example](examples/config.edn) of a configuration. Apart from the configuration you will need to provide the following parameters:
 

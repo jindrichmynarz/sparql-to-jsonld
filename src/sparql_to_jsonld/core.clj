@@ -7,7 +7,8 @@
             [clojure.java.io :as io :refer [as-file]]
             [clojure.edn :as edn]
             [schema.core :as s]
-            [mount.core :as mount])
+            [mount.core :as mount]
+            [sparclj.core :as sparclj])
   (:import (java.io PrintWriter)
            (org.apache.commons.validator.routines UrlValidator)))
 
@@ -31,11 +32,11 @@
   (s/pred valid-url? 'valid-url?))
 
 (def ^:private Config
-  {:sparql-endpoint (s/conditional http? url) ; The URL of the SPARQL endpoint.
-   (s/optional-key :page-size) positive-integer
+  {::sparclj/url (s/conditional http? url) ; The URL of the SPARQL endpoint.
+   (s/optional-key ::sparclj/page-size) positive-integer
    (s/optional-key :sleep) non-negative-number
-   (s/optional-key :start-from) non-negative-integer
-   (s/optional-key :max-attempts) positive-integer
+   (s/optional-key ::sparclj/start-from) non-negative-integer
+   (s/optional-key ::sparclj/retries) positive-integer
    (s/optional-key :remove-jsonld-context) s/Bool})
 
 ; ----- Private functions -----
@@ -97,13 +98,14 @@
              compact-fn (partial jsonld/compact-jsonld frame')
              serialize-fn (fn [data] (jsonld/jsonld->string data :remove-jsonld-context? remove-jsonld-context))
              convert-fn (comp serialize-fn compact-fn frame-fn jsonld/model->jsonld)
+             print-fn (fn [description] (println description) (flush))
              descriptions (->> select-query
                                sparql/select-query-unlimited
                                (pmap (comp describe :resource))
                                (filter (comp not (memfn isEmpty)))
                                (map convert-fn))]
          (if (= output *out*)
-           (doall (map (fn [description] (println description) (flush)) descriptions))
+           (doall (map print-fn descriptions))
            (with-open [writer (io/writer output)]
              (doseq [description descriptions]
                (.write writer description)
@@ -135,7 +137,11 @@
           :as options} :options
          :keys [errors summary]} (parse-opts args cli-options)
         ; Merge defaults
-        config' (merge {:max-attempts 5 :page-size 1000 :sleep 1 :start-from 0} config)]
+        config' (merge {::sparclj/retries 5
+                        ::sparclj/page-size 1000
+                        :sleep 1
+                        ::sparclj/start-from 0}
+                       config)]
     (cond help (info (usage summary))
           errors (die (error-msg errors))
           :else (if-let [error (validate-config config')]
