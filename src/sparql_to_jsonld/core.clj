@@ -91,7 +91,8 @@
              describe-query (slurp describe)
              frame' (jsonld/string->jsonld (slurp frame))
              describe (fn [resource]
-                        (Thread/sleep (* sleep 1000))
+                        (when-not (zero? sleep)
+                          (Thread/sleep (* sleep 1000)))
                         (sparql/describe-query describe-query resource))
              frame-fn (partial jsonld/frame-jsonld frame')
              compact-fn (partial jsonld/compact-jsonld frame')
@@ -137,7 +138,7 @@
         ; Merge defaults
         config' (merge {::sparclj/retries 5
                         ::sparclj/page-size 1000
-                        :sleep 1
+                        :sleep 0
                         ::sparclj/start-from 0}
                        config)]
     (cond help (info (usage summary))

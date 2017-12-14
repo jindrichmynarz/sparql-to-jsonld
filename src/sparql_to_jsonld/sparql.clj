@@ -23,7 +23,9 @@
   [template & {::sparclj/keys [start-from]}]
   (let [get-query-fn (fn [[limit offset]]
                        (render-string template {:limit limit :offset offset}))]
-    (sparclj/select-paged endpoint get-query-fn ::sparclj/start-from start-from)))
+    (sparclj/select-paged endpoint
+                          get-query-fn
+                          ::sparclj/start-from start-from)))
 
 (defn describe-query
   "Execute a SPARQL describe query for `resource` from `template`."
