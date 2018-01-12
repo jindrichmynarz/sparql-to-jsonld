@@ -51,7 +51,8 @@
   [^Integer status
    ^String msg]
   {:pre [(#{0 1} status)]}
-  (println msg)
+  (binding [*out* (if (pos? status) *err* *out*)]
+    (println msg))
   (System/exit status))
 
 (def ^:private die
