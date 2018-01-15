@@ -1,4 +1,4 @@
-(defproject sparql-to-jsonld "0.1.1"
+(defproject sparql-to-jsonld "0.1.2"
   :description "Serializes RDF from a SPARQL endpoint to JSON-LD documents"
   :url "http://github.com/jindrichmynarz/sparql-to-jsonld"
   :license {:name "Eclipse Public License"
