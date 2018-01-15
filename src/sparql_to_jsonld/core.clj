@@ -87,7 +87,7 @@
 (defn- main
   [{:keys [sleep]
     :as config}
-   {:keys [select describe frame output remove-jsonld-context]}]
+   {:keys [context select describe frame output remove-jsonld-context]}]
   (try+
     (mount/start-with-args config)
     (catch [:type ::sparclj/connect-exception] {:keys [message]}
@@ -103,10 +103,12 @@
              compact-fn (partial jsonld/compact-jsonld frame')
              convert-fn (comp compact-fn frame-fn jsonld/model->jsonld)
              jsonld-empty? (fn [data] (-> (.keySet data)
-                                       set
-                                       (disj "@context")
-                                       empty?))
-             serialize-fn (fn [data] (jsonld/jsonld->string data :remove-jsonld-context? remove-jsonld-context))
+                                          set
+                                          (disj "@context")
+                                          empty?))
+             serialize-fn (fn [data] (jsonld/jsonld->string data
+                                                            :remove-jsonld-context? remove-jsonld-context
+                                                            :context context))
              print-fn (fn [description] (println description) (flush))
              descriptions (->> select-query
                                sparql/select-query-unlimited
@@ -135,6 +137,7 @@
     :validate [file-exists? "The JSON-LD frame doesn't exist!"]]
    ["-o" "--output OUTPUT" "Path to the output file"
     :default *out*]
+   [nil "--context CONTEXT" "IRI of JSON-LD @context to be used in the output"]
    [nil "--remove-jsonld-context" "Remove JSON-LD context from the output"
     :default false]
    ["-h" "--help" "Display help message"]])

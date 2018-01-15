@@ -32,8 +32,10 @@
 
 (defn ^String jsonld->string
   "Convert `jsonld` to string."
-  [^LinkedHashMap jsonld & {:keys [remove-jsonld-context?]}]
-  (JsonUtils/toString (if remove-jsonld-context? (doto jsonld (.remove "@context")) jsonld)))
+  [^LinkedHashMap jsonld & {:keys [context remove-jsonld-context?]}]
+  (JsonUtils/toString (cond-> jsonld
+                        remove-jsonld-context? (doto (.remove "@context"))
+                        context (doto (.put "@context" context)))))
 
 (defn ^LinkedHashMap model->jsonld
   "Convert RDF `model` to JSON-LD."
