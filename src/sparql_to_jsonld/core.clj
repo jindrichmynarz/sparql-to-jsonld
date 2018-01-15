@@ -8,7 +8,8 @@
             [clojure.edn :as edn]
             [schema.core :as s]
             [mount.core :as mount]
-            [sparclj.core :as sparclj])
+            [sparclj.core :as sparclj]
+            [slingshot.slingshot :refer [try+]])
   (:import (java.io PrintWriter)
            (org.apache.commons.validator.routines UrlValidator)))
 
@@ -87,7 +88,10 @@
   [{:keys [sleep]
     :as config}
    {:keys [select describe frame output remove-jsonld-context]}]
-  (mount/start-with-args config)
+  (try+
+    (mount/start-with-args config)
+    (catch [:type ::sparclj/connect-exception] {:keys [message]}
+      (die message)))
   (try (let [select-query (slurp select)
              describe-query (slurp describe)
              frame' (jsonld/string->jsonld (slurp frame))
