@@ -101,15 +101,19 @@
                         (sparql/describe-query describe-query resource))
              frame-fn (partial jsonld/frame-jsonld frame')
              compact-fn (partial jsonld/compact-jsonld frame')
-             serialize-fn (fn [data] (jsonld/jsonld->string data :remove-jsonld-context? remove-jsonld-context))
              convert-fn (comp compact-fn frame-fn jsonld/model->jsonld)
+             jsonld-empty? (fn [data] (-> (.keySet data)
+                                       set
+                                       (disj "@context")
+                                       empty?))
+             serialize-fn (fn [data] (jsonld/jsonld->string data :remove-jsonld-context? remove-jsonld-context))
              print-fn (fn [description] (println description) (flush))
              descriptions (->> select-query
                                sparql/select-query-unlimited
                                (pmap (comp describe :resource))
                                (remove (memfn isEmpty))
                                (pmap convert-fn)
-                               (remove empty?)
+                               (remove jsonld-empty?)
                                (map (comp print-fn serialize-fn)))]
          (if (= output *out*)
            (dorun descriptions)
