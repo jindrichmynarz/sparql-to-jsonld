@@ -17,7 +17,8 @@
                                                     javax.jms/jms
                                                     com.sun.jmdk/jmxtools
                                                     com.sun.jmx/jmxri]]
-                 [sparclj "0.2.2"]]
+                 [sparclj "0.2.2"]
+                 [slingshot "0.12.2"]]
   :main sparql-to-jsonld.core
   :profiles {:dev {:plugins [[lein-binplus "0.4.2"]]}
              :uberjar {:aot :all
