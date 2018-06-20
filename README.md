@@ -42,6 +42,7 @@ See [this example](examples/config.edn) of a configuration. Apart from the confi
 * `-d`/`--describe`: A CONSTRUCT or DESCRIBE SPARQL query to describe a resource to download. The query must be a Mustache template that uses the `resource` variable as a placeholder for the resource's IRI. See [this example](examples/describe_query.mustache).
 * `-f`/`--frame`: A [JSON-LD frame](http://json-ld.org/spec/latest/json-ld-framing) to apply to the resource's description. See [this example](examples/frame.jsonld).
 * `-o`/`--output` (optional, default = standard output): A path to file to which the JSON-LD documents will be written.
+* `--context` (optional): IRI to be used as the value of `@context` in the output.
 * `--remove-jsonld-context` (optional): Remove the [JSON-LD context](https://www.w3.org/TR/json-ld/#the-context) from the provided JSON-LD frame from the output. By default, the JSON-LD context is preserved.
 
 By default, the tool prints the framed JSON-LD documents containing the descriptions of the selected resources to the standard output, so that it can be redirected to a file or piped to another process. JSON-LD is output as [Newline Delimited JSON](http://ndjson.org).
