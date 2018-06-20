@@ -1,7 +1,8 @@
 (ns sparql-to-jsonld.sparql
   (:require [sparql-to-jsonld.endpoint :refer [endpoint]]
             [stencil.core :refer [render-string]]
-            [sparclj.core :as sparclj])
+            [sparclj.core :as sparclj]
+            [taoensso.timbre :refer [info]])
   (:import (java.io ByteArrayInputStream)
            (org.apache.jena.rdf.model Model ModelFactory)))
 
@@ -30,4 +31,7 @@
 (defn describe-query
   "Execute a SPARQL describe query for `resource` from `template`."
   [template resource]
-  (construct-query (render-string template {:resource resource})))
+  (let [query (render-string template {:resource resource})]
+    (info (format "Fetching a description of <%s>" resource))
+    (info query)
+    (construct-query query)))

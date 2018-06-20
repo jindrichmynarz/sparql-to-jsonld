@@ -9,7 +9,9 @@
             [schema.core :as s]
             [mount.core :as mount]
             [sparclj.core :as sparclj]
-            [slingshot.slingshot :refer [try+]])
+            [slingshot.slingshot :refer [try+]]
+            [taoensso.timbre :as timbre :refer [error]]
+            [taoensso.timbre.appenders.core :as appenders])
   (:import (java.io PrintWriter)
            (org.apache.commons.validator.routines UrlValidator)))
 
@@ -87,7 +89,11 @@
 (defn- main
   [{:keys [sleep]
     :as config}
-   {:keys [context select describe frame output remove-jsonld-context]}]
+   {:keys [context select describe frame
+           output remove-jsonld-context verbose]}]
+  (timbre/merge-config! {:appenders {:println (if verbose
+                                                (appenders/println-appender {:stream :std-err})
+                                                {:enabled? false})}})
   (try+
     (mount/start-with-args config)
     (catch [:type ::sparclj/connect-exception] {:keys [message]}
@@ -137,6 +143,7 @@
     :validate [file-exists? "The JSON-LD frame doesn't exist!"]]
    ["-o" "--output OUTPUT" "Path to the output file"
     :default *out*]
+   ["-v" "--verbose" "Switch on logging to the standard error."]
    [nil "--context CONTEXT" "IRI of JSON-LD @context to be used in the output"]
    [nil "--remove-jsonld-context" "Remove JSON-LD context from the output"
     :default false]

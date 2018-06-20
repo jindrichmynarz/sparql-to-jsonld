@@ -1,4 +1,4 @@
-(defproject sparql-to-jsonld "0.1.2"
+(defproject sparql-to-jsonld "0.1.3"
   :description "Serializes RDF from a SPARQL endpoint to JSON-LD documents"
   :url "http://github.com/jindrichmynarz/sparql-to-jsonld"
   :license {:name "Eclipse Public License"
@@ -12,6 +12,7 @@
                  [org.apache.jena/jena-core "3.1.1"]
                  [org.apache.jena/jena-arq "3.1.1"]
                  [com.github.jsonld-java/jsonld-java "0.11.1"]
+                 [com.taoensso/timbre "4.10.0"]
                  [org.slf4j/slf4j-log4j12 "1.7.1"]
                  [log4j/log4j "1.2.17" :exclusions [javax.mail/mail
                                                     javax.jms/jms
