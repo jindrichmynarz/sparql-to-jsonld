@@ -142,7 +142,8 @@
    ["-f" "--frame FRAME" "Path to a JSON-LD frame to format data"
     :validate [file-exists? "The JSON-LD frame doesn't exist!"]]
    ["-o" "--output OUTPUT" "Path to the output file"
-    :default *out*]
+    :default *out*
+    :default-desc "STDOUT"]
    ["-v" "--verbose" "Switch on logging to the standard error."]
    [nil "--context CONTEXT" "IRI of JSON-LD @context to be used in the output"]
    [nil "--remove-jsonld-context" "Remove JSON-LD context from the output"
