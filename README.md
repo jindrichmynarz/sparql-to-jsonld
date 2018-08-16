@@ -28,25 +28,19 @@ Or, when compiled with lein-binplus:
 target/sparql_to_jsonld --help
 ```
 
-You will need to provide the tool with several parameters. Provide configuration as an [EDN](https://github.com/edn-format/edn) file that contains the following keys:
+The tool reads CSV from standard input and produces JSON-LD serialized as [Newline Delimited JSON](http://ndjson.org).
 
-* `:sparclj.core/url`: URL of a SPARQL query endpoint, such as `http://localhost:8890/sparql`.
-* `:sparclj.core/page-size` (optional, default = 1000): Number of resources to download in one query.
-* `sleep` (optional, default = 1): Time in seconds to wait in between requests to the SPARQL endpoint.
-* `:sparclj.core/start-from` (optional, default = 0): Number of resources to skip that can be used to restart a previously interrupted download.
-* `:sparclj.core/retries` (optional, default = 5): Maximum number of attempts at retrying failed queries.
+You will need to provide the tool with several parameters. 
 
-See [this example](examples/config.edn) of a configuration. Apart from the configuration you will need to provide the following parameters:
-
-* `-s`/`--sparql`: A paged SPARQL query to select IRIs of resources to download. The query must be a [Mustache](https://mustache.github.io) template that contains `limit` and `offset` variables to drive the paged execution. The query must project a single variable named `?resource`. See [this example](examples/select_query.mustache).
-* `-d`/`--describe`: A CONSTRUCT or DESCRIBE SPARQL query to describe a resource to download. The query must be a Mustache template that uses the `resource` variable as a placeholder for the resource's IRI. See [this example](examples/describe_query.mustache).
-* `-f`/`--frame`: A [JSON-LD frame](http://json-ld.org/spec/latest/json-ld-framing) to apply to the resource's description. See [this example](examples/frame.jsonld).
-* `-o`/`--output` (optional, default = standard output): A path to file to which the JSON-LD documents will be written.
-* `-v`/`--verbose` (optional): Switch on logging to the standard error.
 * `--context` (optional): IRI to be used as the value of `@context` in the output.
+* `-d`/`--describe`: A Mustache template for CONSTRUCT or DESCRIBE SPARQL query to describe a resource to download.
+* `-e`/`--endpoint`: URL of the SPARQL endpoint to query.
+* `-f`/`--frame`: A [JSON-LD frame](http://json-ld.org/spec/latest/json-ld-framing) to apply to the resource's description. See [this example](examples/frame.jsonld).
+* `-h`/`--help` (optional): Show how to use the tool.
 * `--remove-jsonld-context` (optional): Remove the [JSON-LD context](https://www.w3.org/TR/json-ld/#the-context) from the provided JSON-LD frame from the output. By default, the JSON-LD context is preserved.
-
-By default, the tool prints the framed JSON-LD documents containing the descriptions of the selected resources to the standard output, so that it can be redirected to a file or piped to another process. JSON-LD is output as [Newline Delimited JSON](http://ndjson.org).
+* `--retries` (optional, default = 5): Maximum number of attempts at retrying failed queries.
+* `--sleep` (optional, default = 0): Time in seconds to wait in between requests to the SPARQL endpoint.
+* `-v`/`--verbose` (optional): Switch on logging to the standard error.
 
 ## Caveats
 
@@ -54,6 +48,6 @@ By default, the tool prints the framed JSON-LD documents containing the descript
 
 ## License
 
-Copyright © 2016 Jindřich Mynarz
+Copyright © 2016-2018 Jindřich Mynarz
 
 Distributed under the Eclipse Public License version 1.0.

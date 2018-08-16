@@ -29,9 +29,8 @@
                           ::sparclj/start-from start-from)))
 
 (defn describe-query
-  "Execute a SPARQL describe query for `resource` from `template`."
-  [template resource]
-  (let [query (render-string template {:resource resource})]
-    (info (format "Fetching a description of <%s>" resource))
+  "Execute a SPARQL describe query rendered from `template` by using `params`."
+  [template params]
+  (let [query (render-string template params)]
     (info query)
     (construct-query query)))
