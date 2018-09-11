@@ -28,7 +28,7 @@ Or, when compiled with lein-binplus:
 target/sparql_to_jsonld --help
 ```
 
-The tool reads CSV from standard input and produces JSON-LD serialized as [Newline Delimited JSON](http://ndjson.org).
+The tool reads CSV from standard input and produces JSON-LD serialized as [Newline Delimited JSON](http://ndjson.org). The CSV is interpreted as bindings for the template provided via the `--describe` argument.
 
 You will need to provide the tool with several parameters. 
 
